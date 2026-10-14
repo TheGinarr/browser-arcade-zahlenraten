@@ -24,10 +24,10 @@ import { topliste, spielZuruecksetzen } from "./assets/storage.js";
 import { bewegungReduziert, gameOverDialog, toplisteAnzeigen } from "./assets/ui.js";
 
 /* ---------- Konstanten ---------- */
-const SPIEL = "zahlenraten";      // Schlüssel für den Speicher (storage.js)
+const SPIEL = "zahlenraten"; // Schlüssel für den Speicher (storage.js)
 const KLEINSTE_ZAHL = 1;
 const GROESSTE_ZAHL = 100;
-const DIALOG_VERZOEGERUNG_MS = 500;   // Zeit für das Aufblitzen, bevor der Dialog kommt
+const DIALOG_VERZOEGERUNG_MS = 500; // Zeit für das Aufblitzen, bevor der Dialog kommt
 
 /* ---------- Elemente der Seite ---------- */
 const formular = document.getElementById("formular");
@@ -43,11 +43,11 @@ const toplisteBox = document.getElementById("topliste");
 const resetKnopf = document.getElementById("reset");
 
 /* ---------- Spielzustand ---------- */
-let geheimzahl;          // die gesuchte Zahl
-let bisherigeTipps;      // Set: alle schon abgegebenen Zahlen
-let versuche;            // Anzahl gültiger Tipps
-let untereGrenze;        // kleinste Zahl, die noch möglich ist
-let obereGrenze;         // größte Zahl, die noch möglich ist
+let geheimzahl; // die gesuchte Zahl
+let bisherigeTipps; // Set: alle schon abgegebenen Zahlen
+let versuche; // Anzahl gültiger Tipps
+let untereGrenze; // kleinste Zahl, die noch möglich ist
+let obereGrenze; // größte Zahl, die noch möglich ist
 // phase: "spielt"  → es wird geraten
 //        "treffer" → Treffer, das Aufblitzen läuft noch, der Dialog kommt gleich
 //        "vorbei"  → Dialog wurde gezeigt
@@ -81,7 +81,7 @@ function versucheText(anzahl) {
  */
 function animationNeuStarten(element, klasse) {
   element.classList.remove(klasse);
-  void element.offsetWidth;          // Wert wird nicht gebraucht, das Lesen genügt
+  void element.offsetWidth; // Wert wird nicht gebraucht, das Lesen genügt
   element.classList.add(klasse);
   // Aufräumen, damit die Klasse beim nächsten Mal wieder "neu" ist.
   element.addEventListener("animationend", () => element.classList.remove(klasse), { once: true });
@@ -92,7 +92,7 @@ function fehlerZeigen(text) {
   fehlerBox.textContent = text;
   animationNeuStarten(tippFeld, "schuettel");
   tippFeld.focus({ preventScroll: true });
-  tippFeld.select();                 // markiert den Inhalt: direkt überschreibbar
+  tippFeld.select(); // markiert den Inhalt: direkt überschreibbar
 }
 
 /* ============================================================
@@ -113,7 +113,7 @@ function grenzenAnzeigen(mitAnimation) {
   ];
   for (const [element, wert] of anzeigen) {
     const neu = String(wert);
-    if (element.textContent === neu) continue;     // unverändert → keine Animation
+    if (element.textContent === neu) continue; // unverändert → keine Animation
     element.textContent = neu;
     if (mitAnimation) animationNeuStarten(element, "pop");
   }
@@ -133,7 +133,7 @@ function rueckmeldungZeigen(art, text, pfeil) {
   const zeichen = document.createElement("span");
   zeichen.className = "pfeil";
   zeichen.textContent = pfeil;
-  zeichen.setAttribute("aria-hidden", "true");    // Pfeil ist Deko, das Wort sagt alles
+  zeichen.setAttribute("aria-hidden", "true"); // Pfeil ist Deko, das Wort sagt alles
   huelle.append(wort, zeichen);
   rueckmeldungBox.replaceChildren(huelle);
 }
@@ -187,7 +187,7 @@ function neuesSpiel(fokussieren) {
   obereGrenze = GROESSTE_ZAHL;
   phase = "spielt";
 
-  verlaufListe.replaceChildren();               // leert die Liste (CSS :empty zeigt dann den Platzhalter)
+  verlaufListe.replaceChildren(); // leert die Liste (CSS :empty zeigt dann den Platzhalter)
   startHinweisZeigen();
   grenzenAnzeigen(false);
   hudVersuche.textContent = "0";
@@ -273,7 +273,7 @@ function trefferBehandeln(tipp) {
   phase = "treffer";
   rueckmeldungZeigen("treffer", "TREFFER!", "★");
   chipHinzufuegen(tipp, "treffer");
-  animationNeuStarten(tippFeld, "blitz");       // .blitz kommt aus style.css
+  animationNeuStarten(tippFeld, "blitz"); // .blitz kommt aus style.css
 
   // Kurz warten, damit man das Aufblitzen sieht. Bei reduzierter Bewegung
   // gibt es keinen Effekt, also auch keinen Grund zu warten.
@@ -282,15 +282,15 @@ function trefferBehandeln(tipp) {
 }
 
 function dialogZeigen() {
-  if (phase !== "treffer") return;              // Sicherheitsnetz, falls zwischendurch neu gestartet wurde
+  if (phase !== "treffer") return; // Sicherheitsnetz, falls zwischendurch neu gestartet wurde
   phase = "vorbei";
   const dialog = gameOverDialog({
     spiel: SPIEL,
     titel: "GETROFFEN!",
     punkte: versuche,
     punkteText: versucheText(versuche),
-    richtung: "runter",                         // beim Raten ist WENIGER besser
-    format: versucheText,                       // Topliste im Dialog hübsch anzeigen
+    richtung: "runter", // beim Raten ist WENIGER besser
+    format: versucheText, // Topliste im Dialog hübsch anzeigen
     neustart: () => neuesSpiel(true),
   });
   // Schließt man den Dialog mit Esc, wird "neustart" nie aufgerufen. Das
@@ -313,12 +313,14 @@ formular.addEventListener("submit", (ereignis) => {
 });
 
 // Sobald jemand weitertippt, ist die alte Fehlermeldung überholt.
-tippFeld.addEventListener("input", () => { fehlerBox.textContent = ""; });
+tippFeld.addEventListener("input", () => {
+  fehlerBox.textContent = "";
+});
 
 resetKnopf.addEventListener("click", () => {
   spielZuruecksetzen(SPIEL);
-  toplisteAnzeigen(toplisteBox, SPIEL, versucheText);   // jetzt leer
-  bestwertAktualisieren();                              // zeigt wieder "–"
+  toplisteAnzeigen(toplisteBox, SPIEL, versucheText); // jetzt leer
+  bestwertAktualisieren(); // zeigt wieder "–"
 });
 
 /* ============================================================

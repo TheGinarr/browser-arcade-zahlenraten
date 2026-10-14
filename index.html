@@ -1,134 +1,355 @@
 <!doctype html>
 <html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07070f">
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./assets/style.css">
-  <title>Zahlenraten · Browser-Arcade</title>
-  <meta name="description" content="Ich denke mir eine Zahl zwischen 1 und 100. Du rätst, ich sage höher oder tiefer. Wie wenige Versuche brauchst du?">
-  <!-- Seiten-spezifische Optik: Das gemeinsame Design (style.css) liefert Farben, Knöpfe,
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#07070f" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <title>Zahlenraten · Browser-Arcade</title>
+    <meta
+      name="description"
+      content="Ich denke mir eine Zahl zwischen 1 und 100. Du rätst, ich sage höher oder tiefer. Wie wenige Versuche brauchst du?"
+    />
+    <!-- Seiten-spezifische Optik: Das gemeinsame Design (style.css) liefert Farben, Knöpfe,
        Animationen wie .schuettel/.blitz. Hier steht nur, was es ausschließlich in diesem Spiel gibt. -->
-  <style>
-    .raten{max-width:520px;margin:0 auto;display:grid;gap:18px;text-align:center}
+    <style>
+      .raten {
+        max-width: 520px;
+        margin: 0 auto;
+        display: grid;
+        gap: 18px;
+        text-align: center;
+      }
 
-    /* Eingrenzung: "Gesucht zwischen X und Y" */
-    .eingrenzung{margin:0;color:var(--mut)}
-    .eingrenzung strong{
-      display:inline-block;            /* nur so lässt sich ein Inline-Element skalieren */
-      font-family:var(--pixel);font-weight:400;font-size:1.1rem;color:var(--ak);
-      margin:0 .15em;
-    }
-    @keyframes zahl-pop{40%{transform:scale(1.4)}}
-    .pop{animation:zahl-pop .4s ease}
+      /* Eingrenzung: "Gesucht zwischen X und Y" */
+      .eingrenzung {
+        margin: 0;
+        color: var(--mut);
+      }
+      .eingrenzung strong {
+        display: inline-block; /* nur so lässt sich ein Inline-Element skalieren */
+        font-family: var(--pixel);
+        font-weight: 400;
+        font-size: 1.1rem;
+        color: var(--ak);
+        margin: 0 0.15em;
+      }
+      @keyframes zahl-pop {
+        40% {
+          transform: scale(1.4);
+        }
+      }
+      .pop {
+        animation: zahl-pop 0.4s ease;
+      }
 
-    /* Große Rückmeldung nach jedem Tipp */
-    .rueckmeldung{min-height:92px;display:grid;place-items:center}
-    .rueckmeldung-text{
-      display:inline-flex;align-items:baseline;gap:.5em;
-      font-family:var(--pixel);font-size:clamp(1.3rem,6.5vw,2.1rem);line-height:1.4;
-      animation:rueck-rein .45s cubic-bezier(.33,1,.68,1) both;
-    }
-    .rueckmeldung-text .pfeil{font-family:var(--sans);font-size:.9em}
-    .rueckmeldung-text.start{
-      font-size:clamp(.8rem,3.4vw,1rem);color:var(--mut);animation:none;
-    }
-    .rueckmeldung-text.hoeher{color:var(--gold);text-shadow:0 0 22px color-mix(in srgb,var(--gold) 60%,transparent)}
-    .rueckmeldung-text.tiefer{color:var(--cyan);text-shadow:0 0 22px color-mix(in srgb,var(--cyan) 60%,transparent)}
-    .rueckmeldung-text.treffer{color:var(--lime);text-shadow:0 0 22px color-mix(in srgb,var(--lime) 60%,transparent)}
-    @keyframes rueck-rein{
-      from{opacity:0;transform:translateY(-16px) scale(.7)}
-      60%{opacity:1;transform:translateY(2px) scale(1.07)}
-      to{opacity:1;transform:none}
-    }
+      /* Große Rückmeldung nach jedem Tipp */
+      .rueckmeldung {
+        min-height: 92px;
+        display: grid;
+        place-items: center;
+      }
+      .rueckmeldung-text {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.5em;
+        font-family: var(--pixel);
+        font-size: clamp(1.3rem, 6.5vw, 2.1rem);
+        line-height: 1.4;
+        animation: rueck-rein 0.45s cubic-bezier(0.33, 1, 0.68, 1) both;
+      }
+      .rueckmeldung-text .pfeil {
+        font-family: var(--sans);
+        font-size: 0.9em;
+      }
+      .rueckmeldung-text.start {
+        font-size: clamp(0.8rem, 3.4vw, 1rem);
+        color: var(--mut);
+        animation: none;
+      }
+      .rueckmeldung-text.hoeher {
+        color: var(--gold);
+        text-shadow: 0 0 22px color-mix(in srgb, var(--gold) 60%, transparent);
+      }
+      .rueckmeldung-text.tiefer {
+        color: var(--cyan);
+        text-shadow: 0 0 22px color-mix(in srgb, var(--cyan) 60%, transparent);
+      }
+      .rueckmeldung-text.treffer {
+        color: var(--lime);
+        text-shadow: 0 0 22px color-mix(in srgb, var(--lime) 60%, transparent);
+      }
+      @keyframes rueck-rein {
+        from {
+          opacity: 0;
+          transform: translateY(-16px) scale(0.7);
+        }
+        60% {
+          opacity: 1;
+          transform: translateY(2px) scale(1.07);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-    /* Eingabezeile */
-    .eingabe-zeile{display:flex;gap:10px;justify-content:center;align-items:stretch}
-    #tipp{
-      width:min(9.5rem,40vw);text-align:center;
-      font-family:var(--pixel);font-size:1.3rem;color:var(--ak);
-      background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 8px;
-      transition:border-color var(--schnell),box-shadow var(--schnell);
-      -moz-appearance:textfield;appearance:textfield;   /* kleine Pfeil-Knöpfe des Browsers ausblenden */
-    }
-    #tipp::-webkit-outer-spin-button,#tipp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-    #tipp:focus{outline:none;border-color:var(--ak);box-shadow:0 0 14px color-mix(in srgb,var(--ak) 35%,transparent)}
-    .fehler{margin:0;min-height:1.6em;color:var(--pink);font-size:.92rem}   /* min-height: kein Springen im Layout */
+      /* Eingabezeile */
+      .eingabe-zeile {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: stretch;
+      }
+      #tipp {
+        width: min(9.5rem, 40vw);
+        text-align: center;
+        font-family: var(--pixel);
+        font-size: 1.3rem;
+        color: var(--ak);
+        background: var(--panel2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 8px;
+        transition:
+          border-color var(--schnell),
+          box-shadow var(--schnell);
+        -moz-appearance: textfield;
+        appearance: textfield; /* kleine Pfeil-Knöpfe des Browsers ausblenden */
+      }
+      #tipp::-webkit-outer-spin-button,
+      #tipp::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      #tipp:focus {
+        outline: none;
+        border-color: var(--ak);
+        box-shadow: 0 0 14px color-mix(in srgb, var(--ak) 35%, transparent);
+      }
+      .fehler {
+        margin: 0;
+        min-height: 1.6em;
+        color: var(--pink);
+        font-size: 0.92rem;
+      } /* min-height: kein Springen im Layout */
 
-    /* Verlauf der Tipps als Chips (neuester zuerst) */
-    .verlauf{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-    .verlauf:empty::before{content:"Noch keine Tipps";color:var(--mut);font-size:.9rem}
-    .chip{
-      --chip:var(--mut);
-      display:inline-flex;align-items:baseline;gap:7px;
-      padding:6px 13px;border-radius:999px;
-      background:var(--panel2);
-      border:1px solid color-mix(in srgb,var(--chip) 60%,var(--line));
-      animation:chip-rein .4s cubic-bezier(.33,1,.68,1) backwards;
-    }
-    .chip.hoeher{--chip:var(--gold)}
-    .chip.tiefer{--chip:var(--cyan)}
-    .chip.treffer{--chip:var(--lime)}
-    .chip-zahl{font-family:var(--mono);font-weight:600}
-    .chip-pfeil{color:var(--chip);font-size:.8rem}
-    @keyframes chip-rein{from{opacity:0;transform:translateX(-14px) scale(.85)}to{opacity:1;transform:none}}
+      /* Verlauf der Tipps als Chips (neuester zuerst) */
+      .verlauf {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+      .verlauf:empty::before {
+        content: "Noch keine Tipps";
+        color: var(--mut);
+        font-size: 0.9rem;
+      }
+      .chip {
+        --chip: var(--mut);
+        display: inline-flex;
+        align-items: baseline;
+        gap: 7px;
+        padding: 6px 13px;
+        border-radius: 999px;
+        background: var(--panel2);
+        border: 1px solid color-mix(in srgb, var(--chip) 60%, var(--line));
+        animation: chip-rein 0.4s cubic-bezier(0.33, 1, 0.68, 1) backwards;
+      }
+      .chip.hoeher {
+        --chip: var(--gold);
+      }
+      .chip.tiefer {
+        --chip: var(--cyan);
+      }
+      .chip.treffer {
+        --chip: var(--lime);
+      }
+      .chip-zahl {
+        font-family: var(--mono);
+        font-weight: 600;
+      }
+      .chip-pfeil {
+        color: var(--chip);
+        font-size: 0.8rem;
+      }
+      @keyframes chip-rein {
+        from {
+          opacity: 0;
+          transform: translateX(-14px) scale(0.85);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-    /* Nur für Screenreader sichtbar */
-    .nur-screenreader{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  </style>
-</head>
-<body style="--ak:var(--gold)">
-  <div class="raster" aria-hidden="true"></div>
-  <a class="skip-link" href="#main">Zum Inhalt springen</a>
-  <header class="kopf"><nav class="container nav" aria-label="Hauptnavigation">
-    <a class="marke" href="./"><span class="logo">▶</span>GAMES</a>
-    <div class="nav-links"><a href="./impressum.html">Impressum</a><a href="./datenschutz.html">Datenschutz</a></div>
-  </nav></header>
-  <main id="main" class="container">
-    <div class="spiel-kopf"><div><h1>ZAHLENRATEN</h1><p class="unterzeile">Ich denke mir eine Zahl von 1 bis 100. Wie wenige Versuche brauchst du?</p></div></div>
-    <div class="hud">
-      <div class="hud-feld"><div class="label">Versuche</div><div class="wert" id="hud-versuche">0</div></div>
-      <div class="hud-feld"><div class="label">Bestwert</div><div class="wert" id="hud-bestwert">–</div></div>
-    </div>
-    <div class="buehne">
-      <div class="raten">
-        <p class="eingrenzung">Gesucht zwischen <strong id="grenze-unten">1</strong> und <strong id="grenze-oben">100</strong></p>
-        <div class="rueckmeldung" id="rueckmeldung" role="status" aria-live="polite">
-          <span class="rueckmeldung-text start">Gib deinen ersten Tipp ab</span>
+      /* Nur für Screenreader sichtbar */
+      .nur-screenreader {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body style="--ak: var(--gold)">
+    <div class="raster" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <header class="kopf">
+      <nav class="container nav" aria-label="Hauptnavigation">
+        <a class="marke" href="./"><span class="logo">▶</span>GAMES</a>
+        <div class="nav-links">
+          <a href="./impressum.html">Impressum</a><a href="./datenschutz.html">Datenschutz</a>
         </div>
-        <form class="eingabe-zeile" id="formular" novalidate>
-          <label class="nur-screenreader" for="tipp">Dein Tipp (1 bis 100)</label>
-          <input id="tipp" type="number" min="1" max="100" step="1" inputmode="numeric" autocomplete="off" placeholder="1–100">
-          <button class="knopf primaer" type="submit">Raten</button>
-        </form>
-        <p class="fehler" id="fehler" role="alert"></p>
-        <ul class="verlauf" id="verlauf" aria-label="Bisherige Tipps"></ul>
+      </nav>
+    </header>
+    <main id="main" class="container">
+      <div class="spiel-kopf">
+        <div>
+          <h1>ZAHLENRATEN</h1>
+          <p class="unterzeile">
+            Ich denke mir eine Zahl von 1 bis 100. Wie wenige Versuche brauchst du?
+          </p>
+        </div>
       </div>
-    </div>
-    <p class="steuerung">Zahl eintippen und mit <kbd>Enter</kbd> oder dem Knopf „Raten“ abschicken. Tipp: Die Mitte der Eingrenzung ist fast immer der klügste Versuch.</p>
-    <section style="max-width:420px;margin-top:36px"><h2 style="font-family:var(--pixel);font-weight:400;font-size:.85rem">Lokale Top 3</h2><div id="topliste"></div>
-      <button class="knopf" id="reset" style="margin-top:10px">Spielstand zurücksetzen</button></section>
-    <section class="lernbox"><details open><summary>Anleitung &amp; Regeln</summary>
-      <p><strong>Ziel:</strong> Finde die geheime Zahl zwischen 1 und 100 mit so wenigen Versuchen wie möglich.</p>
-      <ul>
-        <li>Nach jedem Tipp sagt dir das Spiel, ob die gesuchte Zahl höher oder tiefer liegt.</li>
-        <li>Die Zeile „Gesucht zwischen X und Y" zeigt dir den noch möglichen Bereich.</li>
-        <li>Tipp: Rate immer die Mitte des Bereichs – damit brauchst du nie mehr als 7 Versuche.</li>
-        <li>In die Top 3 kommt, wer mit den wenigsten Versuchen trifft.</li>
-      </ul>
-    </details></section>
+      <div class="hud">
+        <div class="hud-feld">
+          <div class="label">Versuche</div>
+          <div class="wert" id="hud-versuche">0</div>
+        </div>
+        <div class="hud-feld">
+          <div class="label">Bestwert</div>
+          <div class="wert" id="hud-bestwert">–</div>
+        </div>
+      </div>
+      <div class="buehne">
+        <div class="raten">
+          <p class="eingrenzung">
+            Gesucht zwischen <strong id="grenze-unten">1</strong> und
+            <strong id="grenze-oben">100</strong>
+          </p>
+          <div class="rueckmeldung" id="rueckmeldung" role="status" aria-live="polite">
+            <span class="rueckmeldung-text start">Gib deinen ersten Tipp ab</span>
+          </div>
+          <form class="eingabe-zeile" id="formular" novalidate>
+            <label class="nur-screenreader" for="tipp">Dein Tipp (1 bis 100)</label>
+            <input
+              id="tipp"
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="1–100"
+            />
+            <button class="knopf primaer" type="submit">Raten</button>
+          </form>
+          <p class="fehler" id="fehler" role="alert"></p>
+          <ul class="verlauf" id="verlauf" aria-label="Bisherige Tipps"></ul>
+        </div>
+      </div>
+      <p class="steuerung">
+        Zahl eintippen und mit <kbd>Enter</kbd> oder dem Knopf „Raten“ abschicken. Tipp: Die Mitte
+        der Eingrenzung ist fast immer der klügste Versuch.
+      </p>
+      <section style="max-width: 420px; margin-top: 36px">
+        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">
+          Lokale Top 3
+        </h2>
+        <div id="topliste"></div>
+        <button class="knopf" id="reset" style="margin-top: 10px">Spielstand zurücksetzen</button>
+      </section>
+      <section class="lernbox">
+        <details open>
+          <summary>Anleitung &amp; Regeln</summary>
+          <p>
+            <strong>Ziel:</strong> Finde die geheime Zahl zwischen 1 und 100 mit so wenigen
+            Versuchen wie möglich.
+          </p>
+          <ul>
+            <li>
+              Nach jedem Tipp sagt dir das Spiel, ob die gesuchte Zahl höher oder tiefer liegt.
+            </li>
+            <li>Die Zeile „Gesucht zwischen X und Y" zeigt dir den noch möglichen Bereich.</li>
+            <li>
+              Tipp: Rate immer die Mitte des Bereichs – damit brauchst du nie mehr als 7 Versuche.
+            </li>
+            <li>In die Top 3 kommt, wer mit den wenigsten Versuchen trifft.</li>
+          </ul>
+        </details>
+      </section>
 
-    <section class="lernbox"><details><summary>Wie funktioniert der Code?</summary>
-      <p><strong>Der Zustand besteht aus wenigen Variablen.</strong> <code>geheimzahl</code> ist die gesuchte Zahl, <code>bisherigeTipps</code> ein <code>Set</code> (eine Sammlung ohne Duplikate, in der <code>has()</code> sehr schnell prüft, ob etwas schon vorkommt), <code>untereGrenze</code> und <code>obereGrenze</code> halten fest, was aus den bisherigen Tipps logisch noch möglich ist. Die Anzeige „Gesucht zwischen X und Y“ ist nur ein Spiegel dieser beiden Werte.</p>
-      <p><strong>Ein Formular bringt die Enter-Taste gratis mit.</strong> Steckt das Eingabefeld in einem <code>&lt;form&gt;</code> und der Knopf hat <code>type="submit"</code>, löst Enter automatisch das <code>submit</code>-Ereignis aus. Mit <code>preventDefault()</code> verhindern wir das Neuladen der Seite. Das Attribut <code>novalidate</code> schaltet die Standard-Fehlerblasen des Browsers ab, denn wir prüfen selbst (<code>Number.isInteger</code>, Bereich 1 bis 100, <code>bisherigeTipps.has()</code>) und zeigen eine eigene Meldung samt Schüttel-Animation.</p>
-      <p><strong>Animationen neu starten.</strong> Eine CSS-Animation läuft nur, wenn die Klasse neu hinzukommt. Fügen wir <code>.schuettel</code> ein zweites Mal hinzu, während sie schon dran hängt, passiert nichts. Darum entfernt <code>animationNeuStarten</code> die Klasse, liest einmal <code>offsetWidth</code> (das zwingt den Browser, das Layout neu zu berechnen) und setzt sie wieder. Nach <code>animationend</code> wird sie aufgeräumt.</p>
-      <p><strong>Elemente sicher bauen.</strong> Die Tipp-Chips entstehen mit <code>createElement</code>, Texte kommen per <code>textContent</code> hinein und <code>prepend</code> setzt den neuesten Chip nach vorn. Werte nie per <code>innerHTML</code> in HTML-Text zu mischen schützt vor eingeschleustem Code.</p>
-      <p><strong>Warum man jede Zahl in höchstens 7 Schritten findet (Binärsuche).</strong> Rät man immer die Mitte des noch möglichen Bereichs, halbiert jeder Tipp die Zahl der Kandidaten: 100 → höchstens 50 → 25 → 12 → 6 → 3 → 1. Nach 6 Tipps ist also nur noch eine Zahl übrig, der 7. Tipp trifft sie. Mathematisch: Mit k Tipps lassen sich 2<sup>k</sup> − 1 Zahlen sicher unterscheiden. 2<sup>6</sup> − 1 = 63 reicht für 100 Zahlen nicht, 2<sup>7</sup> − 1 = 127 schon. In Code wäre das <code>Math.ceil(Math.log2(101))</code> = 7. Dasselbe Prinzip steckt in der Binärsuche, mit der Datenbanken und Programme in sortierten Listen extrem schnell etwas finden.</p>
-      <p><strong>Bestwert.</strong> Beim Zahlenraten ist <em>weniger</em> besser. Darum ruft das Spiel den Game-Over-Dialog mit <code>richtung: "runter"</code> auf, und die Topliste sortiert aufsteigend. Der beste Eintrag steht dadurch an erster Stelle.</p>
-    </details></section>
-  </main>
-  <footer class="fuss"><div class="container fuss-in"><span>Browser-Arcade · Open Source</span><nav aria-label="Rechtliches"><a href="./impressum.html">Impressum</a><a href="./datenschutz.html">Datenschutz</a></nav></div></footer>
-  <script type="module" src="./game.js"></script>
-</body>
+      <section class="lernbox">
+        <details>
+          <summary>Wie funktioniert der Code?</summary>
+          <p>
+            <strong>Der Zustand besteht aus wenigen Variablen.</strong> <code>geheimzahl</code> ist
+            die gesuchte Zahl, <code>bisherigeTipps</code> ein <code>Set</code> (eine Sammlung ohne
+            Duplikate, in der <code>has()</code> sehr schnell prüft, ob etwas schon vorkommt),
+            <code>untereGrenze</code> und <code>obereGrenze</code> halten fest, was aus den
+            bisherigen Tipps logisch noch möglich ist. Die Anzeige „Gesucht zwischen X und Y“ ist
+            nur ein Spiegel dieser beiden Werte.
+          </p>
+          <p>
+            <strong>Ein Formular bringt die Enter-Taste gratis mit.</strong> Steckt das Eingabefeld
+            in einem <code>&lt;form&gt;</code> und der Knopf hat <code>type="submit"</code>, löst
+            Enter automatisch das <code>submit</code>-Ereignis aus. Mit
+            <code>preventDefault()</code> verhindern wir das Neuladen der Seite. Das Attribut
+            <code>novalidate</code> schaltet die Standard-Fehlerblasen des Browsers ab, denn wir
+            prüfen selbst (<code>Number.isInteger</code>, Bereich 1 bis 100,
+            <code>bisherigeTipps.has()</code>) und zeigen eine eigene Meldung samt
+            Schüttel-Animation.
+          </p>
+          <p>
+            <strong>Animationen neu starten.</strong> Eine CSS-Animation läuft nur, wenn die Klasse
+            neu hinzukommt. Fügen wir <code>.schuettel</code> ein zweites Mal hinzu, während sie
+            schon dran hängt, passiert nichts. Darum entfernt <code>animationNeuStarten</code> die
+            Klasse, liest einmal <code>offsetWidth</code> (das zwingt den Browser, das Layout neu zu
+            berechnen) und setzt sie wieder. Nach <code>animationend</code> wird sie aufgeräumt.
+          </p>
+          <p>
+            <strong>Elemente sicher bauen.</strong> Die Tipp-Chips entstehen mit
+            <code>createElement</code>, Texte kommen per <code>textContent</code> hinein und
+            <code>prepend</code> setzt den neuesten Chip nach vorn. Werte nie per
+            <code>innerHTML</code> in HTML-Text zu mischen schützt vor eingeschleustem Code.
+          </p>
+          <p>
+            <strong>Warum man jede Zahl in höchstens 7 Schritten findet (Binärsuche).</strong> Rät
+            man immer die Mitte des noch möglichen Bereichs, halbiert jeder Tipp die Zahl der
+            Kandidaten: 100 → höchstens 50 → 25 → 12 → 6 → 3 → 1. Nach 6 Tipps ist also nur noch
+            eine Zahl übrig, der 7. Tipp trifft sie. Mathematisch: Mit k Tipps lassen sich 2<sup
+              >k</sup
+            >
+            − 1 Zahlen sicher unterscheiden. 2<sup>6</sup> − 1 = 63 reicht für 100 Zahlen nicht,
+            2<sup>7</sup> − 1 = 127 schon. In Code wäre das <code>Math.ceil(Math.log2(101))</code> =
+            7. Dasselbe Prinzip steckt in der Binärsuche, mit der Datenbanken und Programme in
+            sortierten Listen extrem schnell etwas finden.
+          </p>
+          <p>
+            <strong>Bestwert.</strong> Beim Zahlenraten ist <em>weniger</em> besser. Darum ruft das
+            Spiel den Game-Over-Dialog mit <code>richtung: "runter"</code> auf, und die Topliste
+            sortiert aufsteigend. Der beste Eintrag steht dadurch an erster Stelle.
+          </p>
+        </details>
+      </section>
+    </main>
+    <footer class="fuss">
+      <div class="container fuss-in">
+        <span>Browser-Arcade · Open Source</span>
+        <nav aria-label="Rechtliches">
+          <a href="./impressum.html">Impressum</a><a href="./datenschutz.html">Datenschutz</a>
+        </nav>
+      </div>
+    </footer>
+    <script type="module" src="./game.js"></script>
+  </body>
 </html>
