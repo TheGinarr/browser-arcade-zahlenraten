@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#07070f" />
+    <meta name="theme-color" content="#07070f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f3f9" media="(prefers-color-scheme: light)" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="./assets/style.css" />
+    <script src="./assets/thema.js?v=20261024"></script>
+    <link rel="stylesheet" href="./assets/style.css?v=20261024w" />
+    <link rel="stylesheet" href="./assets/umgebung.css?v=20261024" />
     <title>Zahlenraten · Browser-Arcade</title>
     <meta
       name="description"
@@ -230,7 +233,7 @@
           <div class="wert" id="hud-bestwert">–</div>
         </div>
       </div>
-      <div class="buehne">
+      <div class="buehne umgebung u-raten">
         <div class="raten">
           <p class="eingrenzung">
             Gesucht zwischen <strong id="grenze-unten">1</strong> und
@@ -262,9 +265,7 @@
         der Eingrenzung ist fast immer der klügste Versuch.
       </p>
       <section style="max-width: 420px; margin-top: 36px">
-        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">
-          Lokale Top 3
-        </h2>
+        <h2 style="font-family: var(--pixel); font-weight: 400; font-size: 0.85rem">Topliste</h2>
         <div id="topliste"></div>
         <button class="knopf" id="reset" style="margin-top: 10px">Spielstand zurücksetzen</button>
       </section>
